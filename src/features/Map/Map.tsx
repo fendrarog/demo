@@ -1,0 +1,409 @@
+import * as React from 'react';
+import { useRef } from 'react';
+import ReactMapGl, { Source, Layer, LayerProps, Popup } from 'react-map-gl';
+import attractionsGeo from '../../data/09Geo.json';
+import restaurantGeo from '../../data/restaurantGeo.json';
+import GeoJSON, {
+  FeatureCollection,
+  GeoJsonProperties,
+  GeoJsonTypes,
+  Geometry,
+} from 'geojson';
+import MapImage from './MapImage';
+import { Link } from 'react-router-dom';
+
+const MAPBOX_TOKEN =
+  'pk.eyJ1Ijoic211c29sb3YiLCJhIjoiY2xobTJib2psMTgzNjNqcDEyNGlnbHo3bSJ9.abBvILy34RqG0sw4yYa8Tg'; // Set your mapbox token here
+
+const layerStyleCircle: LayerProps = {
+  id: 'point',
+  type: 'circle',
+  paint: {
+    'circle-color': 'white',
+    'circle-radius': {
+      base: 1.75,
+      stops: [
+        [10, 2],
+        [12, 8],
+        [22, 20],
+      ],
+    },
+    'circle-stroke-color': '#333333',
+    'circle-stroke-width': 1,
+  },
+};
+
+export const Map = () => {
+  const [viewState, setViewState] = React.useState({
+    longitude: 42.04666497287596,
+    latitude: 44.22755897698616,
+    zoom: 16,
+  });
+
+  const [popupInfo, setPopupInfo] = React.useState<null | GeoJsonProperties>(null);
+  console.log(viewState);
+
+  const layerStyleRestaurants: LayerProps = {
+    id: 'restaurants',
+    type: 'symbol',
+    layout: {
+      // 'icon-ignore-placement': true,
+      // 'text-ignore-placement': true,
+
+      'icon-image': 'restaurantPoint', // reference the image
+      'icon-size': {
+        base: 1.5,
+        stops: [
+          [12, 0.25],
+          [22, 0.4],
+        ],
+      },
+      'text-field': ['get', 'name'],
+      'text-anchor': 'bottom',
+      'text-offset': [0, -1.5],
+    },
+    paint: {
+      'text-color': 'purple',
+      'text-halo-color': '#fff',
+      'text-halo-blur': 5,
+      'text-halo-width': 2,
+      'text-opacity': [
+        'step',
+        ['zoom'], //input 0
+        0, // output 0
+        9.5,
+        1,
+      ],
+      'icon-opacity': [
+        'step',
+        ['zoom'], //input 0
+        0, // output 0
+        9.5,
+        1,
+      ],
+    },
+  };
+
+  const layerStyleAttractions: LayerProps = {
+    id: 'attractions',
+    type: 'symbol',
+    layout: {
+      // 'icon-ignore-placement': true,
+      // 'text-ignore-placement': true,
+
+      'icon-image': [
+        'match',
+        ['get', 'scale_name_en'],
+        'extra1',
+        'attraction_extra',
+        'extra2',
+        'attraction_extra',
+        'big1',
+        'attraction_big',
+        'big2',
+        'attraction_big',
+        'medium',
+        'attraction_medium',
+        'attraction_small',
+      ], // reference the image
+      'icon-size': {
+        base: 1.5,
+        stops: [
+          [12, 0.15],
+          [22, 0.4],
+        ],
+      },
+      'text-field': ['get', 'name'],
+      'text-anchor': 'bottom',
+      'text-offset': [0, -1.5],
+    },
+    paint: {
+      'text-color': 'purple',
+      'text-halo-color': '#fff',
+      'text-halo-blur': 5,
+      'text-halo-width': 2,
+      'text-opacity': [
+        'step',
+        ['zoom'], //input 0
+        ['match', ['get', 'scale_name_en'], 'extra1', 1, 0], // output 0
+        4,
+        ['match', ['get', 'scale_name_en'], 'extra1', 1, 'extra2', 1, 0],
+        4.5,
+        ['match', ['get', 'scale_name_en'], 'extra1', 1, 'extra2', 1, 'big1', 1, 0], // input1, output1
+        5.5,
+        [
+          'match',
+          ['get', 'scale_name_en'],
+          'extra1',
+          1,
+          'extra2',
+          1,
+          'big1',
+          1,
+          'big2',
+          1,
+          0,
+        ],
+        7,
+        [
+          'match',
+          ['get', 'scale_name_en'],
+          'extra1',
+          1,
+          'extra2',
+          1,
+          'big1',
+          1,
+          'big2',
+          1,
+          'medium',
+          1,
+          0,
+        ],
+        12,
+        1, // etc etc
+      ],
+      'icon-opacity': [
+        'step',
+        ['zoom'], //input 0
+        ['match', ['get', 'scale_name_en'], 'extra1', 1, 0], // output 0
+        4,
+        ['match', ['get', 'scale_name_en'], 'extra1', 1, 'extra2', 1, 0],
+        4.5,
+        ['match', ['get', 'scale_name_en'], 'extra1', 1, 'extra2', 1, 'big1', 1, 0], // input1, output1
+        5.5,
+        [
+          'match',
+          ['get', 'scale_name_en'],
+          'extra1',
+          1,
+          'extra2',
+          1,
+          'big1',
+          1,
+          'big2',
+          1,
+          0,
+        ],
+        7,
+        [
+          'match',
+          ['get', 'scale_name_en'],
+          'extra1',
+          1,
+          'extra2',
+          1,
+          'big1',
+          1,
+          'big2',
+          1,
+          'medium',
+          1,
+          0,
+        ],
+        12,
+        1, // etc etc
+      ],
+    },
+  };
+  return (
+    <>
+      <ReactMapGl
+        style={{ width: '100%', height: '733px' }}
+        {...viewState}
+        onMove={(evt) => setViewState(evt.viewState)}
+        interactiveLayerIds={['attractions', 'restaurants', 'point']}
+        onRender={(event) => event.target.resize()}
+        onClick={(evt) => {
+          if (!evt.features) return;
+
+          setPopupInfo(evt.features[0]);
+          console.log(evt.features[0]);
+        }}
+        mapStyle="mapbox://styles/smusolov/clh3ek1fm00mz01pg0mze8jl2"
+        mapboxAccessToken={MAPBOX_TOKEN}
+      >
+        <MapImage />
+        <Source
+          id="09"
+          type="geojson"
+          data={attractionsGeo as FeatureCollection<Geometry, GeoJsonProperties>}
+        >
+          <Layer {...layerStyleCircle} />
+          <Layer {...layerStyleAttractions} />
+        </Source>
+
+        <Source
+          id="my-data"
+          type="geojson"
+          data={restaurantGeo as FeatureCollection<Geometry, GeoJsonProperties>}
+        >
+          <Layer {...layerStyleRestaurants} />
+        </Source>
+        {popupInfo && (
+          <Popup
+            anchor="bottom"
+            longitude={Number(popupInfo.geometry.coordinates[0])}
+            latitude={Number(popupInfo.geometry.coordinates[1])}
+            closeButton={false}
+            onClose={() => setPopupInfo(null)}
+            offset={25}
+            maxWidth="none"
+            closeOnMove={true}
+          >
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '4px',
+                maxWidth: '260px',
+              }}
+            >
+              <Link
+                to={`/place/${popupInfo.properties.object_id}`}
+                state={{ popupInfo }}
+                style={{
+                  flex: '1 1 100%',
+                  display: 'flex',
+                  padding: '7px',
+                  gap: '4px',
+                  backgroundColor: '#FFF',
+                  boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+                  borderRadius: '8px',
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      borderRadius: '6px',
+                      overflow: 'hidden',
+                      width: '87px',
+                      height: '87px',
+                    }}
+                  >
+                    <img
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      src={`/images${JSON.parse(popupInfo.properties.photo_link)[0]}`}
+                      alt="picplace"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div
+                    style={{
+                      fontFamily: 'Montserrat',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                      lineHeight: '15px',
+                      color: '#565656',
+                    }}
+                  >
+                    {popupInfo.properties.name}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: 'Montserrat',
+                      fontSize: '13px',
+                      lineHeight: '16px',
+                      color: '#248742',
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    {popupInfo.properties.poi_type_name}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: 'Montserrat',
+                      fontSize: '13px',
+                      lineHeight: '16px',
+                      color: '#248742',
+                    }}
+                  >
+                    {popupInfo.properties.scale_name}
+                  </div>
+                </div>
+              </Link>
+              <div
+                style={{
+                  padding: '14px 11px 11px',
+                  backgroundColor: '#FFF',
+                  boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <img src={'/icons/redlike.svg'} alt="like" />
+                </div>
+              </div>
+              <div
+                style={{
+                  flex: '1',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '10px 0 7px 15px',
+                  backgroundColor: '#FFF',
+                  boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '3px',
+                    borderRadius: '50%',
+                    backgroundColor: '#248742',
+                    width: '29px',
+                    height: '29px',
+                  }}
+                >
+                  <img src={'/icons/car.svg'} alt="route" />
+                </div>
+                <div
+                  style={{
+                    fontFamily: 'Montserrat',
+                    fontWeight: '700',
+                    fontSize: '13px',
+                    lineHeight: '29px',
+                    color: '#248742',
+                  }}
+                >
+                  Добавить в маршрут
+                </div>
+              </div>
+            </div>
+          </Popup>
+        )}
+      </ReactMapGl>
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '23px',
+          left: '21px',
+          fontWeight: '700',
+          fontSize: '16px',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          color: 'white',
+          padding: '15px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+        }}
+      >
+        <p>Широта: {viewState.latitude.toFixed(3)}</p>
+        <p>Долгота: {viewState.longitude.toFixed(3)}</p>
+        <p>Увеличение: {viewState.zoom.toFixed(1)}</p>
+      </div>
+    </>
+  );
+};
