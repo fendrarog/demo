@@ -11,6 +11,7 @@ import GeoJSON, {
 } from 'geojson';
 import MapImage from './MapImage';
 import { Link } from 'react-router-dom';
+import MapboxLanguage from '@mapbox/mapbox-gl-language';
 
 const MAPBOX_TOKEN =
   'pk.eyJ1Ijoic211c29sb3YiLCJhIjoiY2xobTJib2psMTgzNjNqcDEyNGlnbHo3bSJ9.abBvILy34RqG0sw4yYa8Tg'; // Set your mapbox token here
@@ -206,6 +207,16 @@ export const Map = () => {
       ],
     },
   };
+
+  const mapRefCallback = React.useCallback((ref: MapRef | null) => {
+    if (ref !== null) {
+      const map = ref;
+
+      const language = new MapboxLanguage();
+      map.addControl(language);
+    }
+  }, []);
+
   return (
     <>
       <ReactMapGl
@@ -221,6 +232,7 @@ export const Map = () => {
           console.log(evt.features[0]);
         }}
         mapStyle="mapbox://styles/smusolov/clh3ek1fm00mz01pg0mze8jl2"
+        ref={mapRefCallback}
         mapboxAccessToken={MAPBOX_TOKEN}
       >
         <MapImage />
