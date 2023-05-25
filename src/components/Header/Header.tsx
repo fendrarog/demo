@@ -8,29 +8,37 @@ const { Text } = Typography;
 const Header: React.FC = () => {
   return (
     <>
-      <div className={style.logo}>
-        <div className={style.logo__image}>
-          <img src={'/icons/logo.svg'} alt="logo" />
+      <Link to="/" className={style.menu__link}>
+        <div className={style.logo}>
+          <div className={style.logo__image}>
+            <img src={'/icons/logo.svg'} alt="logo" />
+          </div>
+          <div className={style.logo__text}>Novitravel</div>
         </div>
-        <div className={style.logo__text}>Novitravel</div>
-      </div>
+      </Link>
 
       <nav className={style.menu}>
         <ul className={style.menu__list}>
           <li className={style.menu__item}>
-            <Link to="/" className={style.menu__link}>
-              <Text className={style.menu__text}>Главная</Text>
+            <Link to="/map" className={style.menu__link}>
+              <Text className={style.menu__text}>Карта</Text>
             </Link>
           </li>
 
           <li className={style.menu__item}>
-            <Link to="/about" className={style.menu__link}>
+            <Link to="/extraordinary" className={style.menu__link}>
               <Text className={style.menu__text}>Уникальные места</Text>
             </Link>
           </li>
 
           <li className={style.menu__item}>
-            <Link to="/dashboard" className={style.menu__link}>
+            <Link to="/reserve" className={style.menu__link}>
+              <Text className={style.menu__text}>Забронировать отель</Text>
+            </Link>
+          </li>
+
+          <li className={style.menu__item}>
+            <Link to="/stories" className={style.menu__link}>
               <Text className={style.menu__text}>Тревел истории</Text>
             </Link>
           </li>
@@ -38,12 +46,6 @@ const Header: React.FC = () => {
           <li className={style.menu__item}>
             <Link to="/dashboard" className={style.menu__link}>
               <Text className={style.menu__text}>Помощь</Text>
-            </Link>
-          </li>
-
-          <li className={style.menu__item}>
-            <Link to="/dashboard" className={style.menu__link}>
-              <Text className={style.menu__text}>Забронировать отель</Text>
             </Link>
           </li>
 

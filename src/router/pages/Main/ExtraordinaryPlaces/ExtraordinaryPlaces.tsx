@@ -27,7 +27,7 @@ const ExtraordinaryPlaces: React.FC = () => {
                   place.region_name ? `${place.region_name},` : ''
                 } ${place.city_name}`}</div>
                 <Button shape="round" className={style.button} size="large">
-                  Построить маршурт
+                  Построить маршрут
                 </Button>
               </div>
             </div>
