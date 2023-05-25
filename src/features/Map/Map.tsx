@@ -20,7 +20,7 @@ const layerStyleCircle: LayerProps = {
   id: 'point',
   type: 'circle',
   paint: {
-    'circle-color': 'white',
+    'circle-color': 'white', 
     'circle-radius': {
       base: 1.75,
       stops: [
@@ -241,7 +241,7 @@ export const Map = () => {
           type="geojson"
           data={attractionsGeo as FeatureCollection<Geometry, GeoJsonProperties>}
         >
-          <Layer {...layerStyleCircle} />
+          {/* <Layer {...layerStyleCircle} /> */}
           <Layer {...layerStyleAttractions} />
         </Source>
 

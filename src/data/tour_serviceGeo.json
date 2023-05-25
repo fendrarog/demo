@@ -141,53 +141,6 @@
         "rating": [],
         "photo_link": []
       }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [41.5023439291, 43.6505790364]
-      },
-      "properties": {
-        "country_id": 1,
-        "country_name": "RU",
-        "region_id": "RU-09",
-        "region_name": "Карачаево-Черкессия",
-        "city_id": 99,
-        "city_name": "Домбай",
-        "poi_id": null,
-        "poi_type_name": "Туруслуга",
-        "poi_type_id": null,
-        "name": "Прогулка на квадрацикле Ущелье Джамагат, Джамагатские нарзаны ",
-        "type_name_en": "extrim",
-        "type_name": "Экстримальная",
-        "type_id": 1,
-        "subtype_name_en": "atv",
-        "subtype_name": "Прогулка на квадрацикле",
-        "subtype_id": 6,
-        "scale_name_en": null,
-        "scale_name": null,
-        "scale_id": null,
-        "icon_link": "/icon_album/tour_service.png",
-        "address": "ул. Ленина ,30",
-        "video_link": null,
-        "description": "У нас две локации отправления.\nСнегоходы в Домбае Квадроциклы в Теберде.",
-        "date_start": 1687392000000,
-        "time_start": "14:00:00",
-        "duration": 90,
-        "turusluga_category": "Индивидуальная",
-        "turusluga_cost": 1500,
-        "guide_info": null,
-        "isSouvenir": null,
-        "turusluga_program": null,
-        "age_limit": "12+",
-        "limit": null,
-        "isAudioguide": null,
-        "turusluga_email": "soltanborlakov85@gmail.com",
-        "turusluga_phone": "+7 (928) 381-04-41",
-        "rating": [],
-        "photo_link": []
-      }
     }
   ]
 }
