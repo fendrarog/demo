@@ -26,22 +26,22 @@ const Footer: React.FC = () => {
                   </Link>
                 </li>
                 <li className={style.menu__item}>
-                  <Link to="/aboutus" className={style.menu__link}>
+                  <Link to="/faq" className={style.menu__link}>
                     <p className={style.menu__text}>Вопросы и ответы</p>
                   </Link>
                 </li>
                 <li className={style.menu__item}>
-                  <Link to="/aboutus" className={style.menu__link}>
+                  <Link to="/contacts" className={style.menu__link}>
                     <p className={style.menu__text}>Контакты</p>
                   </Link>
                 </li>
                 <li className={style.menu__item}>
-                  <Link to="/aboutus" className={style.menu__link}>
+                  <Link to="/feedback" className={style.menu__link}>
                     <p className={style.menu__text}>Обратная связь</p>
                   </Link>
                 </li>
                 <li className={style.menu__item}>
-                  <Link to="/aboutus" className={style.menu__link}>
+                  <Link to="/news" className={style.menu__link}>
                     <p className={style.menu__text}>Новости</p>
                   </Link>
                 </li>
